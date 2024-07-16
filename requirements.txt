@@ -4,3 +4,7 @@ matplotlib~=3.9.0
 beautifulsoup4~=4.12.3
 requests~=2.32.3
 plotly~=5.14
+chess~=1.10.0
+
+pillow~=10.4.0
+scipy~=1.13.1
