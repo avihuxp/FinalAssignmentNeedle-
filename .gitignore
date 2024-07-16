@@ -1,3 +1,9 @@
 /Milestone/plots/normed_log/
 /Milestone/plots/only_log/
 /data/lichess_db_standard_rated_2017-01.pgn/lichess_db_standard_rated_2017-01.pgn
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/misc.xml
+/.idea/vcs.xml
+/Milestone/.ipynb_checkpoints/milestone-checkpoint.ipynb
+/Milestone/positions_c1_over_25000_games.npy
