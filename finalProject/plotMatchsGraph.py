@@ -3,15 +3,19 @@ import pickle
 from collections import defaultdict
 
 import chess.pgn
+import community as community_louvain
 import networkx as nx
 import numpy as np
 import pandas as pd
+import sns
 from matplotlib import pyplot as plt
 from tqdm import trange
-import community as community_louvain
+
+from .DB.Player import Player
+from .DB.PlayerDB import PlayerDB
 
 
-def get_adjacency_matrix(player_db: PlayerDB, num_players=-1) -> np.ndarray:
+def get_adjacency_matrix(player_db: 'PlayerDB', num_players=-1) -> np.ndarray:
     """
     Create an adjacency matrix from the PlayerDB.
 
@@ -169,6 +173,7 @@ def plot_reoccurring_games_histogram(game_count):
 
     plt.show()
 
+
 def plot_player_graph_with_communities_arranged(game_count, min_games=2):
     G = nx.Graph()
     filtered_game_count = {k: v for k, v in game_count.items() if v > min_games}
@@ -229,6 +234,7 @@ def plot_player_graph_with_communities_arranged(game_count, min_games=2):
         ]
         mean_games = np.mean(games_within_community) if games_within_community else 0
         print(f"Community {comm}: {len(nodes)} nodes, {mean_games:.2f} mean games")
+
 
 def plot_player_graph_with_communities_arranged1(game_count, min_games=2):
     G = nx.Graph()
@@ -292,10 +298,10 @@ def plot_player_graph_with_communities_arranged1(game_count, min_games=2):
     plt.suptitle(
         f"Edges: {G.number_of_edges()} Nodes: {G.number_of_nodes()} Total Games: {sum(filtered_game_count.values())}")
     plt.show()
-    #print the communities and the mean number of games played by each community
+    # print the communities and the mean number of games played by each community
     for comm, nodes in communities.items():
-        print(f"Community {comm}: {len(nodes)} nodes, {np.mean([game_count[(u, v)] for u in nodes for v in nodes])} mean games")
-
+        print(
+            f"Community {comm}: {len(nodes)} nodes, {np.mean([game_count[(u, v)] for u in nodes for v in nodes])} mean games")
 
 
 def plot_player_graph_by_game_activity(game_count, min_games=2):
@@ -343,21 +349,10 @@ def plot_player_graph_by_game_activity(game_count, min_games=2):
         nx.draw_networkx_edges(G, pos, edgelist=[(u, v)], edge_color="black", alpha=(count / max_count))
 
     plt.title("Player Graph by Game Activity (More Active Players Near the Center)")
-    plt.suptitle(f"Edges: {G.number_of_edges()} Nodes: {G.number_of_nodes()} Total Games: {sum(filtered_game_count.values())}")
+    plt.suptitle(
+        f"Edges: {G.number_of_edges()} Nodes: {G.number_of_nodes()} Total Games: {sum(filtered_game_count.values())}")
     plt.show()
 
     # Print the top 10 most active players
     for player, total_games in sorted_players[:10]:
         print(f"Player: {player}, Total Games: {total_games}")
-
-if __name__ == '__main__':
-    pgn_file_path = r"C:\Users\amir\Documents\University Files\A Needle in a Data Haystack\milestone 2\FinalAssignmentNeedle--master\FinalAssignmentNeedle--master\data\lichess_db_standard_rated_2017-01.pgn\lichess_db_standard_rated_2017-01.pgn"
-    num_games = 500000
-    game_count = build_player_graph(pgn_file_path, max_games=num_games)
-    # game_count = load_player_graph_data(max_games=num_games)
-    plot_reoccurring_games_histogram(game_count)
-    # print(game_count)
-    # plot_player_graph(game_count)
-    plot_player_graph_with_communities_arranged(game_count, 10)
-    plot_player_graph_with_communities_arranged1(game_count, 10)
-    plot_player_graph_by_game_activity(game_count, 10)

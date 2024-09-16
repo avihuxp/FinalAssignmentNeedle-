@@ -4,7 +4,9 @@ from finalProject.DB.GameHistoryDB import GameHistoryDB
 from finalProject.DB.Player import Player
 from finalProject.DB.PlayerDB import PlayerDB
 from finalProject.aggregateGamesFunction import aggregate_games
-from finalProject.plotMatchsGraph import plot_reoccurring_games_histogram, plot_player_graph
+from finalProject.plotMatchsGraph import plot_reoccurring_games_histogram, plot_player_graph, \
+    plot_player_graph_with_communities_arranged, plot_player_graph_with_communities_arranged1, \
+    plot_player_graph_by_game_activity
 
 BASE_CACHE_PATH = "cache/"
 
@@ -85,6 +87,9 @@ def main():
     plot_reoccurring_games_histogram(game_count_with_player_ids)
     # plot_adjacency_matrix(get_adjacency_matrix(game_count_with_player_ids))
     plot_player_graph(game_count_with_player_ids)
+    plot_player_graph_with_communities_arranged(game_count_with_player_ids, 10)
+    plot_player_graph_with_communities_arranged1(game_count_with_player_ids, 10)
+    plot_player_graph_by_game_activity(game_count_with_player_ids, 10)
 
 
 if __name__ == '__main__':
