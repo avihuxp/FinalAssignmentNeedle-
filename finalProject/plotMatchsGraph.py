@@ -10,6 +10,67 @@ from matplotlib import pyplot as plt
 from tqdm import trange
 
 
+def get_adjacency_matrix(player_db: PlayerDB, num_players=-1) -> np.ndarray:
+    """
+    Create an adjacency matrix from the PlayerDB.
+
+    Args:
+        player_db (PlayerDB): The PlayerDB object to create the adjacency matrix from.
+        num_players (int): The number of players to include in the adjacency matrix. If -1, include all players.
+            Defaults to -1.
+
+    Returns:
+        np.ndarray: The adjacency matrix.
+    """
+
+    def player_predicate(player: 'Player') -> bool:
+        return player.games_played > 3
+
+    sorted_players = sorted(player_db.get_players_by_predicate(player_predicate).values(),
+                            key=lambda x: x.player_id,
+                            reverse=True)
+    num_players = len(sorted_players)
+    adjacency_matrix = np.zeros((num_players, num_players), dtype=int)
+
+    for i, player in enumerate(sorted_players):
+        for opponent, games_played in player.get_opponents(player_db).items():
+            if opponent in sorted_players:
+                j = sorted_players.index(opponent)
+                adjacency_matrix[i, j] = games_played
+
+    return adjacency_matrix
+
+
+def plot_adjacency_matrix(adjacency_matrix: np.ndarray) -> None:
+    """
+    Plot the adjacency matrix as a heatmap, using the viridis colormap, with the origin at the top left.
+
+    Args:
+        adjacency_matrix (np.ndarray): The adjacency matrix to plot.
+    """
+    # Create a heatmap with the 'viridis' colormap without gridlines
+    plt.figure(figsize=(8, 6))
+    loged = np.round(np.log(adjacency_matrix), 3)
+    loged = np.nan_to_num(loged, nan=0)
+    loged[loged == -np.inf] = 0
+    normed = (loged - np.min(loged)) / (np.max(loged) - np.min(loged))
+    sns.heatmap(normed, cmap='viridis', cbar=True, square=True,
+                linewidths=0, linecolor=None)
+
+    # Remove x and y axis labels and ticks
+    plt.xticks([], [])
+    plt.yticks([], [])
+    plt.xlabel('')
+    plt.ylabel('')
+
+    # Invert y-axis to make the origin at the top left
+    plt.gca().invert_yaxis()
+
+    plt.title(f'Player Adjacency Matrix: Number of Games Played: {adjacency_matrix.shape}')
+
+    plt.show()
+
+
 def build_player_graph(pgn_file_path, max_games):
     data_file = f"matches_data_{max_games}.pkl"
     # Check if the data file exists
