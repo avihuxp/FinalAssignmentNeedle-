@@ -65,12 +65,14 @@ def aggregate_games(pgn_file_path: str, player_db: PlayerDB, game_history_db: Ga
             game_history.time_control = game.headers.get("TimeControl", "")
             game_history.termination_reason = game.headers.get("Termination", "")
             game_history.tournament_info = game.headers.get("Event", "")
+            game_history.white_player_name = game.headers.get("White")
+            game_history.black_player_name = game.headers.get("Black")
 
             # Parse moves
             moves = []
             for move in game.mainline_moves():
-                moves.append(move.uci())
-            game_history.moves = " ".join(moves)
+                moves.append(move)
+            game_history.moves = moves
             game_history.duration_moves = len(moves)
 
             # Set ELO ratings
