@@ -1,9 +1,11 @@
 from typing import Dict, Tuple
 
+from PageRank import pagerank_analysis
 from finalProject.DB.GameHistoryDB import GameHistoryDB
 from finalProject.DB.Player import Player
 from finalProject.DB.PlayerDB import PlayerDB
 from finalProject.aggregateGamesFunction import aggregate_games
+from finalProject.kmeansChosInGames import chess_chaos_plot
 from finalProject.plotMatchsGraph import plot_reoccurring_games_histogram, plot_player_graph, \
     plot_player_graph_with_communities_arranged, plot_player_graph_with_communities_arranged1, \
     plot_player_graph_by_game_activity
@@ -19,6 +21,7 @@ def get_game_count(game_history_db: 'GameHistoryDB', player_db: 'PlayerDB') -> D
 
     Args:
         game_history_db (GameHistoryDB): The GameHistoryDB object to get the game counts from.
+        player_db (PlayerDB): The PlayerDB object to get the player objects from.
 
     Returns:
         dict: A dictionary containing the number of games each player has played against each other.
@@ -47,7 +50,7 @@ def to_game_counts_with_player_ids(game_count: Dict[Tuple['Player', 'Player'], i
     return {(u.player_id, v.player_id): count for (u, v), count in game_count.items()}
 
 
-def initiate_databases(num_games: int = 30000) -> Tuple['GameHistoryDB', 'PlayerDB']:
+def initiate_databases(num_games: int = 10000) -> Tuple['GameHistoryDB', 'PlayerDB']:
     """
     Load PlayerDB and GameHistoryDB from file if they exist, otherwise process games and save databases to file before
     returning them.
@@ -79,17 +82,17 @@ def initiate_databases(num_games: int = 30000) -> Tuple['GameHistoryDB', 'Player
 
 
 def main():
-    num_games = 10000
+    num_games = 30000
     game_history_db, player_db = initiate_databases(num_games)
-
     game_count = get_game_count(game_history_db, player_db)
     game_count_with_player_ids = to_game_counts_with_player_ids(game_count)
     plot_reoccurring_games_histogram(game_count_with_player_ids)
-    # plot_adjacency_matrix(get_adjacency_matrix(game_count_with_player_ids))
     plot_player_graph(game_count_with_player_ids)
     plot_player_graph_with_communities_arranged(game_count_with_player_ids, 10)
     plot_player_graph_with_communities_arranged1(game_count_with_player_ids, 10)
     plot_player_graph_by_game_activity(game_count_with_player_ids, 10)
+    pagerank_analysis(game_history_db)
+    chess_chaos_plot(game_history_db)
 
 
 if __name__ == '__main__':

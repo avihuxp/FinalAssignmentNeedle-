@@ -15,7 +15,7 @@ from .DB.Player import Player
 from .DB.PlayerDB import PlayerDB
 
 
-def get_adjacency_matrix(player_db: 'PlayerDB', num_players=-1) -> np.ndarray:
+def get_adjacency_matrix(player_db: 'PlayerDB') -> np.ndarray:
     """
     Create an adjacency matrix from the PlayerDB.
 
@@ -138,15 +138,9 @@ def plot_player_graph(game_count, min_games=2):
 
     plt.figure(figsize=(20, 20))
     pos = nx.spring_layout(G, k=0.1)
-    # pos = nx.kamada_kawai_layout(G)
 
     # Draw nodes as dots
     nx.draw_networkx_nodes(G, pos, node_size=1, node_color="blue")
-
-    # Draw edges between nodes that the width of the edge is proportional to the number of games played
-    edges = G.edges()
-    weights = [game_count[(u, v)] for u, v in edges]
-    # nx.draw_networkx_edges(G, pos, edgelist=edges, width=weights, edge_color="gray")
 
     max_count = max(filtered_game_count.values())
 
@@ -156,6 +150,7 @@ def plot_player_graph(game_count, min_games=2):
                                alpha=(count / max_count))
 
     plt.title("Player Graph with Edge Weights")
+
     # add subtile with number of edges, nodes, and total games played
     plt.suptitle(
         f"Edges: {G.number_of_edges()} Nodes: {G.number_of_nodes()} Total Games: {sum(filtered_game_count.values())}")
@@ -298,10 +293,6 @@ def plot_player_graph_with_communities_arranged1(game_count, min_games=2):
     plt.suptitle(
         f"Edges: {G.number_of_edges()} Nodes: {G.number_of_nodes()} Total Games: {sum(filtered_game_count.values())}")
     plt.show()
-    # print the communities and the mean number of games played by each community
-    for comm, nodes in communities.items():
-        print(
-            f"Community {comm}: {len(nodes)} nodes, {np.mean([game_count[(u, v)] for u in nodes for v in nodes])} mean games")
 
 
 def plot_player_graph_by_game_activity(game_count, min_games=2):

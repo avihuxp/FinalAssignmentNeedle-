@@ -15,14 +15,16 @@ class GameHistory:
             white_player_id (int): The ID of the player with white pieces.
             black_player_id (int): The ID of the player with black pieces.
         """
-        self.timestamp: datetime = datetime.now() # temporary and overwritten in instantiation
+        self.timestamp: datetime = datetime.now()  # temporary and overwritten in instantiation
         self.duration_seconds: int = 0
         self.duration_moves: int = 0
         self.white_player_id: int = white_player_id
         self.black_player_id: int = black_player_id
+        self.white_player_name = ""
+        self.black_player_name = ""
         self.opening: str = ""
         self.result: str = ""
-        self.moves: str = ""
+        self.moves = None
         self.white_elo: int = 0
         self.black_elo: int = 0
         self.time_control: str = ""
@@ -51,7 +53,9 @@ class GameHistory:
             'time_control': self.time_control,
             'tournament_info': self.tournament_info,
             'termination_reason': self.termination_reason,
-            'eco_code': self.eco_code
+            'eco_code': self.eco_code,
+            'white_player_name': self.white_player_name,
+            'black_player_name': self.black_player_name
         }
 
     @classmethod
@@ -78,4 +82,6 @@ class GameHistory:
         game.tournament_info = data['tournament_info']
         game.termination_reason = data['termination_reason']
         game.eco_code = data['eco_code']
+        game.white_player_name = data['white_player_name']
+        game.black_player_name = data['black_player_name']
         return game

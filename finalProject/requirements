@@ -1,0 +1,14 @@
+python-chess
+matplotlib
+networkx
+numpy
+scipy
+pandas
+seaborn
+scikit-learn
+python-louvain
+tqdm
+pickle5
+community
+sns
+scipy
