@@ -50,7 +50,7 @@ def to_game_counts_with_player_ids(game_count: Dict[Tuple['Player', 'Player'], i
     return {(u.player_id, v.player_id): count for (u, v), count in game_count.items()}
 
 
-def initiate_databases(num_games: int = 10000) -> Tuple['GameHistoryDB', 'PlayerDB']:
+def initiate_databases(num_games: int = 30000) -> Tuple['GameHistoryDB', 'PlayerDB']:
     """
     Load PlayerDB and GameHistoryDB from file if they exist, otherwise process games and save databases to file before
     returning them.
