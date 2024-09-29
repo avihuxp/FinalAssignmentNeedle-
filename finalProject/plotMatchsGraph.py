@@ -230,6 +230,18 @@ def plot_player_graph_with_communities_arranged(game_count, min_games=2):
         mean_games = np.mean(games_within_community) if games_within_community else 0
         print(f"Community {comm}: {len(nodes)} nodes, {mean_games:.2f} mean games")
 
+    return communities
+
+
+def create_community_elo_dict(communities, player_db):
+    # Create a data structure to hold ELO ratings grouped by community
+    community_elo_dict = defaultdict(list)
+    for comm, nodes in communities.items():
+        for node in nodes:
+            player = player_db.get_player_by_id(node)
+            community_elo_dict[comm].append({'player_id': player.player_id, 'elo': player.elo_history[-1]})
+    return community_elo_dict
+
 
 def plot_player_graph_with_communities_arranged1(game_count, min_games=2):
     G = nx.Graph()
