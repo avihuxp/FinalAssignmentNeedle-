@@ -15,7 +15,7 @@ from .DB.Player import Player
 from .DB.PlayerDB import PlayerDB
 
 
-def get_adjacency_matrix(player_db: 'PlayerDB') -> np.ndarray:
+def get_adjacency_matrix(player_db: 'PlayerDB', num_players=-1) -> np.ndarray:
     """
     Create an adjacency matrix from the PlayerDB.
 
@@ -234,12 +234,36 @@ def plot_player_graph_with_communities_arranged(game_count, min_games=2):
 
 
 def create_community_elo_dict(communities, player_db):
+    """
+    Create a dictionary where each community is associated with a list of players
+    and their ELO ratings. Player IDs are remapped to start from 0 upwards.
+    :param communities: A dictionary where keys are community IDs and values are lists of player IDs.
+    :param player_db: A database or dictionary that allows fetching player information by player ID.
+    :return: A dictionary where keys are community IDs and values are lists of dictionaries
+             with remapped 'player_id' and 'elo'.
+    """
     # Create a data structure to hold ELO ratings grouped by community
     community_elo_dict = defaultdict(list)
+
+    # Create a mapping from original player IDs to new sequential player IDs starting from 0
+    player_id_mapping = {}
+    current_id = 0
+
     for comm, nodes in communities.items():
         for node in nodes:
+            # If the node (player_id) hasn't been assigned a new ID, assign it
+            if node not in player_id_mapping:
+                player_id_mapping[node] = current_id
+                current_id += 1
+
+            # Get the player object from the database
             player = player_db.get_player_by_id(node)
-            community_elo_dict[comm].append({'player_id': player.player_id, 'elo': player.elo_history[-1]})
+
+            # Add the remapped player_id and ELO rating to the community's list
+            remapped_id = player_id_mapping[node]
+            community_elo_dict[comm].append(
+                {'player_id': remapped_id, 'elo': player.elo_history[-1]})
+
     return community_elo_dict
 
 
@@ -305,6 +329,10 @@ def plot_player_graph_with_communities_arranged1(game_count, min_games=2):
     plt.suptitle(
         f"Edges: {G.number_of_edges()} Nodes: {G.number_of_nodes()} Total Games: {sum(filtered_game_count.values())}")
     plt.show()
+    # print the communities and the mean number of games played by each community
+    for comm, nodes in communities.items():
+        print(
+            f"Community {comm}: {len(nodes)} nodes, {np.mean([game_count[(u, v)] for u in nodes for v in nodes])} mean games")
 
 
 def plot_player_graph_by_game_activity(game_count, min_games=2):
